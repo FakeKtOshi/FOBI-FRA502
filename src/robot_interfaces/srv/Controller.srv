@@ -1,0 +1,13 @@
+# REQUEST
+std_msgs/String mode
+
+std_msgs/Float64MultiArray q_traj      # AUTO only
+std_msgs/Float64MultiArray qd_traj     # AUTO only
+int32 n_points
+int32 n_joints
+
+geometry_msgs/Point position           # IK only
+
+---
+# RESPONSE
+bool inprogress

@@ -1,0 +1,20 @@
+# REQUEST
+std_msgs/String  mode               # "AUTO"
+
+# Initial and final position
+std_msgs/Float64MultiArray q_start
+std_msgs/Float64MultiArray q_goal
+
+# Initial and final velocity
+std_msgs/Float64MultiArray v_start
+std_msgs/Float64MultiArray v_goal
+
+float64 duration
+
+---
+bool inprogress
+int32 n_points
+int32 n_joints
+
+std_msgs/Float64MultiArray q_traj
+std_msgs/Float64MultiArray qd_traj

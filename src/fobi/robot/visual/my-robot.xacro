@@ -1,0 +1,189 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="fobi_robot">
+
+  <!-- ============================
+       Constants
+       ============================ -->
+  <xacro:property name="pi" value="3.14159265359"/>
+  <xacro:property name="deg2rad" value="${pi/180.0}"/>
+  <xacro:property name="joint_limit" value="${45.0 * deg2rad}"/>
+
+  <!-- Change path if your meshes live somewhere else -->
+  <xacro:property name="mesh_path" value="package://fobi/meshes"/>
+
+  <!-- ============================
+       LINKS
+       ============================ -->
+
+  <!-- 0: base (fixed) -->
+  <link name="base_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="${mesh_path}/Base.STL" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </visual>
+  </link>
+
+  <!-- 1: body (joint_1) -->
+  <link name="body_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="${mesh_path}/Body.STL" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </visual>
+  </link>
+
+  <!-- 2: torso (joint_2) -->
+  <link name="torso_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="${mesh_path}/Torso.STL" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </visual>
+  </link>
+
+  <!-- 3: head (joint_3) -->
+  <link name="head_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="${mesh_path}/Head.STL" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </visual>
+  </link>
+
+  <!-- 4: left shoulder (joint_4) -->
+  <link name="left_shoulder_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="${mesh_path}/LeftShoulder.STL" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </visual>
+  </link>
+
+  <!-- 5: left arm (joint_5) -->
+  <link name="left_arm_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="${mesh_path}/LeftArm.STL" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </visual>
+  </link>
+
+  <!-- 6: right shoulder (joint_6) -->
+  <link name="right_shoulder_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="${mesh_path}/RightShoulder.STL" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </visual>
+  </link>
+
+  <!-- 7: right arm (joint_7) -->
+  <link name="right_arm_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="${mesh_path}/RightArm.STL" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </visual>
+  </link>
+   
+  <!-- ============================
+       JOINTS
+       ============================ -->
+
+  <!-- joint_1: base_link -> body_link
+       MDH: d1 ≈ 0.00925 m (9.25 mm) along z
+       Axis: yaw around z
+  -->
+  <joint name="joint_1" type="revolute">
+    <parent link="base_link"/>
+    <child link="body_link"/>
+    <origin xyz="0 0 0.00925" rpy="0 0 0"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="-${joint_limit}" upper="${joint_limit}" effort="10.0" velocity="1.0"/>
+  </joint>
+
+  <!-- joint_2: body_link -> torso_link
+       MDH: d2 ≈ 0.1575 m (157.5 mm) along z
+       Axis: yaw around z
+  -->
+  <joint name="joint_2" type="revolute">
+    <parent link="body_link"/>
+    <child link="torso_link"/>
+    <origin xyz="0 0 0.1575" rpy="0 0 0"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="-${joint_limit}" upper="${joint_limit}" effort="10.0" velocity="1.0"/>
+  </joint>
+
+  <!-- joint_3: torso_link -> head_link
+       MDH had alpha = +90° for this segment.
+       Here we encode that as a rotation around x.
+  -->
+  <joint name="joint_3" type="revolute">
+    <parent link="torso_link"/>
+    <child link="head_link"/>
+    <!-- adjust z offset if head mesh is not aligned -->
+    <origin xyz="0 0 0.008" rpy="${90.0*deg2rad} 0 0"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="-${joint_limit}" upper="${joint_limit}" effort="10.0" velocity="1.0"/>
+  </joint>
+
+  <!-- joint_4: torso_link -> left_shoulder_link
+       Shoulder on left side of torso.
+       Adjust xyz so that LeftShoulder.STL attaches correctly.
+  -->
+  <joint name="joint_4" type="revolute">
+    <parent link="torso_link"/>
+    <child link="left_shoulder_link"/>
+    <!-- example: y=+0.08 left, z=+0.10 up (tweak in RViz) -->
+    <origin xyz="0 0.08 0.10" rpy="0 0 0"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="-${joint_limit}" upper="${joint_limit}" effort="10.0" velocity="1.0"/>
+  </joint>
+
+  <!-- joint_5: left_shoulder_link -> left_arm_link
+       Arm going down from shoulder.
+       MDH had d≈0.095 m on one of the arm links; use that as example.
+  -->
+  <joint name="joint_5" type="revolute">
+    <parent link="left_shoulder_link"/>
+    <child link="left_arm_link"/>
+    <!-- example: down along -z -->
+    <origin xyz="0 0 -0.095" rpy="0 0 0"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="-${joint_limit}" upper="${joint_limit}" effort="10.0" velocity="1.0"/>
+  </joint>
+
+  <!-- joint_6: torso_link -> right_shoulder_link
+       Symmetric to left shoulder on y<0.
+  -->
+  <joint name="joint_6" type="revolute">
+    <parent link="torso_link"/>
+    <child link="right_shoulder_link"/>
+    <!-- example: y=-0.08 right, z=+0.10 up (tweak in RViz) -->
+    <origin xyz="0 -0.08 0.10" rpy="0 0 0"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="-${joint_limit}" upper="${joint_limit}" effort="10.0" velocity="1.0"/>
+  </joint>
+
+  <!-- joint_7: right_shoulder_link -> right_arm_link
+       Same as left arm but on right side.
+  -->
+  <joint name="joint_7" type="revolute">
+    <parent link="right_shoulder_link"/>
+    <child link="right_arm_link"/>
+    <!-- example: down along -z -->
+    <origin xyz="0 0 -0.095" rpy="0 0 0"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="-${joint_limit}" upper="${joint_limit}" effort="10.0" velocity="1.0"/>
+  </joint>
+
+</robot>

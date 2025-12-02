@@ -1,0 +1,8 @@
+# Request
+std_msgs/String state
+std_msgs/String button
+geometry_msgs/Point position
+---
+# Response
+bool inprogress
+std_msgs/String mode_readback
