@@ -45,20 +45,34 @@ source install/setup.bash
 # Run System
 # Terminal 1
 ```
-ros2 launch lab4_6602 launch.py
+ros2 launch fobi launch.py
 ```
 
 # Terminal 2
 ```
-ros2 run lab4_6602 keyboard.py
+ros2 run fobi keyboard.py
+```
+
+# Terminal 3 (Choice 1)
+```
+# If you want to try this mode [TELEOP], then run this command:
+ros2 run fobi pwm_mode.py 
+```
+
+# Terminal 3 (Choice 2)
+```
+# If you want to try [AUTo], then run this command with autofeed function (or manually adjust)
+ros2 run fobi position_mode.py
+ros2 run fobi autofeed.py
 ```
 
 # Keyboard Commands
+* U, J : control both arm rotation
+* H, K : control hip rotation
+* O, L : control head rotation
 ```
 A : AUTO mode
-I : IK mode → enter X Y Z
-F : TELEOP_F (Frame velocity)
-G : TELEOP_G (Global velocity)
+F : TELEOP
 
 U : +X
 J : -X
@@ -71,11 +85,12 @@ SPACE : STOP
 X : EXIT
 ```
 
+
 # Setup RVIz Enviroment
 ```
 - Add RobotModel & TF via By display type
 - Click on RobotModel and selected Description Topic to view a model with "/robot_description"
-- Then selected "map" from Fixed frame in Global Options, to link_0
+- Then selected "map" from Fixed frame in Global Options, to world
 ```
 # Preview of RVIz 
 <img width="1197" height="755" alt="image" src="https://github.com/user-attachments/assets/35baa750-0202-4035-8960-232be2469c36" />
